@@ -1,26 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useDropzone } from 'react-dropzone';
 
 function App() {
+  const { getRootProps, getInputProps, acceptedFiles } = useDropzone();
+  const files = acceptedFiles.map((file) => (
+    <li key={file.path}>{file.path}</li>
+  ));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <section className="container">
+      <div {...getRootProps({ className: 'dropzone' })}>
+        <input
+          {...getInputProps()}
+          directory=""
+          webkitdirectory=""
+          type="file"
+        />{' '}
+        <p>Dropzone without click events</p>
+      </div>
+      <aside>
+        <h4>Files</h4>
+        <ul>{files}</ul>
+      </aside>
+    </section>
   );
 }
-
 export default App;
