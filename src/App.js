@@ -1,28 +1,48 @@
-import React from 'react';
-import { useDropzone } from 'react-dropzone';
+import React, { Component } from 'react';
+import './index.css';
+import axios from 'axios';
 
-function App() {
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone();
-  const files = acceptedFiles.map((file) => (
-    <li key={file.path}>{file.path}</li>
-  ));
+class App extends Component {
+  onChangeHandler = (event) => {
+    console.log(event.target.files[0]);
 
-  return (
-    <section className="container">
-      <div {...getRootProps({ className: 'dropzone' })}>
-        <input
-          {...getInputProps()}
-          directory=""
-          webkitdirectory=""
-          type="file"
-        />{' '}
-        <p>Dropzone without click events</p>
+    // axios.get('http://localhost:8080/rulesheets').then((res) => {
+    //   // then print response status
+    //   console.log(res);
+    // }); // this works
+
+    // axios.post('', {
+    //   firstName: 'Fred',
+    //   lastName: 'Flintstone'
+    // })
+    // .then(function (response) {
+    //   console.log(response);
+    // })
+    var formData = new FormData();
+    formData.append('file', event.target.files[0]);
+    axios
+      .post('http://localhost:8080/rulesheet', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((error) => {
+        console.log('nagkamali');
+        console.log(error.response);
+      });
+  };
+
+  render() {
+    return (
+      <div className="proper">
+        {' '}
+        <input type="file" name="file" onChange={this.onChangeHandler} />
       </div>
-      <aside>
-        <h4>Files</h4>
-        <ul>{files}</ul>
-      </aside>
-    </section>
-  );
+    );
+  }
 }
+
 export default App;
