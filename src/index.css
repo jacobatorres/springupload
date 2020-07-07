@@ -19,3 +19,7 @@ code {
 .top-bottom {
   margin-top: 100px;
 }
+
+.looklikebutton {
+  text-decoration: underline;
+}
