@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './index.css';
 import axios from 'axios';
+import Aux from './hoc/Auxillary';
 
 class App extends Component {
   onChangeHandler = (event) => {
@@ -37,10 +38,51 @@ class App extends Component {
 
   render() {
     return (
-      <div className="proper">
-        {' '}
-        <input type="file" name="file" onChange={this.onChangeHandler} />
-      </div>
+      <Aux>
+        <h1 className="left-top">Upload Directory</h1>
+        <div className="left-top">
+          {' '}
+          <input type="file" name="file" onChange={this.onChangeHandler} />
+        </div>
+        <div className="top-bottom"></div>
+        <h1 className="left-top">Customers</h1>
+        <table className="left-top">
+          <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Age</th>
+          </tr>
+          <tr>
+            <td>Jill</td>
+            <td>Smith</td>
+            <td>50</td>
+          </tr>
+          <tr>
+            <td>Eve</td>
+            <td>Jackson</td>
+            <td>94</td>
+          </tr>
+        </table>
+        <div className="top-bottom"></div>
+        <h1 className="left-top">Rulesheets</h1>
+        <table className="left-top">
+          <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th>Age</th>
+          </tr>
+          <tr>
+            <td>Jill</td>
+            <td>Smith</td>
+            <td>50</td>
+          </tr>
+          <tr>
+            <td>Eve</td>
+            <td>Jackson</td>
+            <td>94</td>
+          </tr>
+        </table>
+      </Aux>
     );
   }
 }

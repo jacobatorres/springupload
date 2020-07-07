@@ -12,6 +12,10 @@ code {
     monospace;
 }
 
-.proper {
-  text-align: center;
+.left-top {
+  padding-left: 50px;
+}
+
+.top-bottom {
+  margin-top: 100px;
 }
