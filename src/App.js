@@ -7,11 +7,37 @@ import Dropzone from 'react-dropzone';
 class App extends Component {
   state = {
     messages: [],
+    customer_ids: [],
+    customer_names: [],
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
     console.log(uploadedFiles);
   };
+
+  componentDidMount() {
+    // get the customers
+    // put them in a state: id, name
+    axios
+      .get('http://localhost:8080/customers')
+      .then((res) => {
+        console.log(res);
+
+        // for loop into getting the ids and name
+
+        for (var i = 0; i < res.data.length; i++) {
+          console.log(res.data[i].id);
+          this.setState((prevState) => ({
+            customer_ids: [...prevState.customer_ids, res.data[i].id],
+
+            customer_names: [...prevState.customer_names, res.data[i].name],
+          }));
+        }
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  }
 
   onChangeHandler = (event) => {
     console.log('wahhhh hule');
@@ -106,22 +132,26 @@ class App extends Component {
         </div> */}
         <div className="top-bottom"></div>
         <h1 className="left-top">Customers</h1>
+
         <table className="left-top">
           <tr>
             <th>Firstname</th>
             <th>Lastname</th>
-            <th>Age</th>
+            <th></th>
           </tr>
-          <tr>
-            <td>Jill</td>
-            <td>Smith</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>Jackson</td>
-            <td>94</td>
-          </tr>
+          {this.state.customer_ids.length === 0
+            ? null
+            : this.state.customer_ids.map((i, j) => (
+                <tr>
+                  <td key={j} className="left-top">
+                    {i}
+                  </td>
+                  <td key={j} className="left-top">
+                    {this.state.customer_names[j]}
+                  </td>
+                  <td> Delete</td>
+                </tr>
+              ))}
         </table>
         <p className="left-top looklikebutton">Add Customer</p>
         <div className="top-bottom"></div>
