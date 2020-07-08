@@ -9,6 +9,10 @@ class App extends Component {
     messages: [],
     customer_ids: [],
     customer_names: [],
+    rulesheet_ids: [],
+    rulesheet_types: [],
+    rulesheet_cid: [],
+    rulesheet_filecontents: [],
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
@@ -26,13 +30,39 @@ class App extends Component {
         // for loop into getting the ids and name
 
         for (var i = 0; i < res.data.length; i++) {
-          console.log(res.data[i].id);
           this.setState((prevState) => ({
             customer_ids: [...prevState.customer_ids, res.data[i].id],
 
             customer_names: [...prevState.customer_names, res.data[i].name],
           }));
         }
+
+        axios
+          .get('http://localhost:8080/rulesheets')
+          .then((res2) => {
+            // for loop into getting the ids and name
+            console.log(res2);
+            for (var i = 0; i < res2.data.length; i++) {
+              this.setState((prevState) => ({
+                rulesheet_ids: [...prevState.rulesheet_ids, res2.data[i].id],
+
+                rulesheet_types: [
+                  ...prevState.rulesheet_types,
+                  res2.data[i].type,
+                ],
+
+                rulesheet_cid: [...prevState.rulesheet_cid, res2.data[i].cid],
+
+                rulesheet_filecontents: [
+                  ...prevState.rulesheet_filecontents,
+                  res2.data[i].filecontent,
+                ],
+              }));
+            }
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
       })
       .catch((error) => {
         console.log(error.response);
@@ -135,8 +165,8 @@ class App extends Component {
 
         <table className="left-top">
           <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
+            <th>Customer ID</th>
+            <th>Name</th>
             <th></th>
           </tr>
           {this.state.customer_ids.length === 0
@@ -154,25 +184,37 @@ class App extends Component {
               ))}
         </table>
         <p className="left-top looklikebutton">Add Customer</p>
+
         <div className="top-bottom"></div>
         <h1 className="left-top">Rulesheets</h1>
         <table className="left-top">
           <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Age</th>
+            <th>Id</th>
+            <th>Type</th>
+            <th>CustomerID</th>
+            <th>FileContent</th>
           </tr>
-          <tr>
-            <td>Jill</td>
-            <td>Smith</td>
-            <td>50</td>
-          </tr>
-          <tr>
-            <td>Eve</td>
-            <td>Jackson</td>
-            <td>94</td>
-          </tr>
+          {this.state.rulesheet_ids.length === 0
+            ? null
+            : this.state.rulesheet_ids.map((i, j) => (
+                <tr>
+                  <td key={j} className="left-top">
+                    {i}
+                  </td>
+                  <td key={j} className="left-top">
+                    {this.state.rulesheet_types[j]}
+                  </td>
+                  <td key={j} className="left-top">
+                    {this.state.rulesheet_cid[j]}
+                  </td>{' '}
+                  <td key={j} className="left-top">
+                    {this.state.rulesheet_filecontents[j].substring(0, 10) +
+                      '...'}
+                  </td>{' '}
+                </tr>
+              ))}
         </table>
+        <div className="top-bottom"></div>
       </Aux>
     );
   }
