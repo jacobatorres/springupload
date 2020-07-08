@@ -5,6 +5,9 @@ import Aux from './hoc/Auxillary';
 import Dropzone from 'react-dropzone';
 
 class App extends Component {
+  state = {
+    messages: [],
+  };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
     console.log(uploadedFiles);
@@ -17,6 +20,7 @@ class App extends Component {
 
     var list_of_files = event.target.files;
 
+    var messages_from_loop = [];
     for (var i = 0; i < list_of_files.length; i++) {
       console.log(list_of_files[i]);
       // list_of_files[i].webkitRelativePath = list_of_files[i].name
@@ -30,11 +34,15 @@ class App extends Component {
         })
         .then((res) => {
           console.log(res);
+          this.setState((prevState) => ({
+            messages: [...prevState.messages, res.data],
+          }));
         })
         .catch((error) => {
           console.log(error.response);
         });
     }
+    console.log('end');
 
     // // axios.get('http://localhost:8080/rulesheets').then((res) => {
     // //   // then print response status
@@ -84,7 +92,13 @@ class App extends Component {
             </div>
           )}
         </Dropzone>
-        {whatever}
+        {this.state.messages.length === 0
+          ? null
+          : this.state.messages.map((message) => (
+              <li key={message} className="left-top">
+                {message}
+              </li>
+            ))}
         {/*         
         <div className="left-top">
           {' '}
