@@ -13,6 +13,7 @@ class App extends Component {
     rulesheet_types: [],
     rulesheet_cid: [],
     rulesheet_filecontents: [],
+    newCustomer: '',
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
@@ -129,9 +130,25 @@ class App extends Component {
     //   });
   };
 
+  handleChange = (event) => {
+    this.setState({ newCustomer: event.target.value });
+  };
+
   deleteCustomer = (id) => {
     axios
       .delete('http://localhost:8080/customer/' + id)
+      .then((res) => {
+        console.log(res);
+        window.location.reload(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
+  addCustomer = () => {
+    axios
+      .post('http://localhost:8080/customer?name=' + this.state.newCustomer)
       .then((res) => {
         console.log(res);
         window.location.reload(false);
@@ -234,6 +251,17 @@ class App extends Component {
                     </tr>
                   ))}
             </table>
+            <form onSubmit={this.addCustomer} style={{ 'margin-top': '10px' }}>
+              <label>
+                Add Customer Name:
+                <input
+                  type="text"
+                  value={this.state.newCustomer}
+                  onChange={this.handleChange}
+                />
+              </label>
+              <input type="submit" value="Submit" />
+            </form>
           </div>
         </div>
         <div className="top-bottom"></div>
