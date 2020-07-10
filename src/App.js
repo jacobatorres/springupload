@@ -161,59 +161,70 @@ class App extends Component {
           <input type="file" name="file" onChange={this.onChangeHandler} />
         </div> */}
         <div className="top-bottom"></div>
-        <h1 className="left-top">Customers</h1>
 
-        <table className="left-top">
-          <tr>
-            <th>Customer ID</th>
-            <th>Name</th>
-            <th></th>
-          </tr>
-          {this.state.customer_ids.length === 0
-            ? null
-            : this.state.customer_ids.map((i, j) => (
-                <tr>
-                  <td key={j} className="left-top">
-                    {i}
-                  </td>
-                  <td key={j} className="left-top">
-                    {this.state.customer_names[j]}
-                  </td>
-                  <td> Delete</td>
-                </tr>
-              ))}
-        </table>
-        <p className="left-top looklikebutton">Add Customer</p>
+        <div className="left-top">
+          <div style={{ display: 'inline-block' }}>
+            <h1>Rulesheets</h1>
 
-        <div className="top-bottom"></div>
-        <h1 className="left-top">Rulesheets</h1>
-        <table className="left-top">
-          <tr>
-            <th>Id</th>
-            <th>Type</th>
-            <th>CustomerID</th>
-            <th>FileContent</th>
-          </tr>
-          {this.state.rulesheet_ids.length === 0
-            ? null
-            : this.state.rulesheet_ids.map((i, j) => (
-                <tr>
-                  <td key={j} className="left-top">
-                    {i}
-                  </td>
-                  <td key={j} className="left-top">
-                    {this.state.rulesheet_types[j]}
-                  </td>
-                  <td key={j} className="left-top">
-                    {this.state.rulesheet_cid[j]}
-                  </td>{' '}
-                  <td key={j} className="left-top">
-                    {this.state.rulesheet_filecontents[j].substring(0, 10) +
-                      '...'}
-                  </td>{' '}
-                </tr>
-              ))}
-        </table>
+            <table>
+              <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>CustomerID</th>
+                <th>FileContent</th>
+              </tr>
+              {this.state.rulesheet_ids.length === 0
+                ? null
+                : this.state.rulesheet_ids.map((i, j) => (
+                    <tr>
+                      <td key={j} className="left-top">
+                        {i}
+                      </td>
+                      <td key={j} className="left-top">
+                        {this.state.rulesheet_types[j]}
+                      </td>
+                      <td key={j} className="left-top">
+                        {this.state.rulesheet_cid[j]}
+                      </td>{' '}
+                      <td key={j} className="left-top">
+                        {this.state.rulesheet_filecontents[j].substring(0, 10) +
+                          '...'}
+                      </td>{' '}
+                    </tr>
+                  ))}
+            </table>
+          </div>
+
+          <div
+            style={{
+              float: 'left',
+              'margin-right': '200px',
+            }}
+          >
+            <h1>Customers</h1>
+
+            <table>
+              <tr>
+                <th>Customer ID</th>
+                <th>Name</th>
+                <th></th>
+              </tr>
+              {this.state.customer_ids.length === 0
+                ? null
+                : this.state.customer_ids.map((i, j) => (
+                    <tr>
+                      <td key={j} className="left-top">
+                        {i}
+                      </td>
+                      <td key={j} className="left-top">
+                        {this.state.customer_names[j]}
+                      </td>
+                      <td> Delete</td>
+                    </tr>
+                  ))}
+            </table>
+          </div>
+        </div>
         <div className="top-bottom"></div>
       </Aux>
     );
