@@ -129,6 +129,18 @@ class App extends Component {
     //   });
   };
 
+  deleteCustomer = (id) => {
+    axios
+      .delete('http://localhost:8080/customer/' + id)
+      .then((res) => {
+        console.log(res);
+        window.location.reload(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
   render() {
     let whatever = null;
     return (
@@ -195,12 +207,7 @@ class App extends Component {
             </table>
           </div>
 
-          <div
-            style={{
-              float: 'left',
-              'margin-right': '200px',
-            }}
-          >
+          <div style={{ float: 'right', 'margin-right': '40%' }}>
             <h1>Customers</h1>
 
             <table>
@@ -219,7 +226,11 @@ class App extends Component {
                       <td key={j} className="left-top">
                         {this.state.customer_names[j]}
                       </td>
-                      <td> Delete</td>
+                      <td>
+                        <a href="#" onClick={() => this.deleteCustomer(i)}>
+                          Delete
+                        </a>
+                      </td>
                     </tr>
                   ))}
             </table>
