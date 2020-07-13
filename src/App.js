@@ -14,6 +14,9 @@ class App extends Component {
     rulesheet_cid: [],
     rulesheet_filecontents: [],
     newCustomer: '',
+    authorized: false,
+    username: '',
+    password: '',
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
@@ -66,6 +69,8 @@ class App extends Component {
           });
       })
       .catch((error) => {
+        console.log('sad :( ');
+
         console.log(error.response);
       });
   }
@@ -134,6 +139,19 @@ class App extends Component {
     this.setState({ newCustomer: event.target.value });
   };
 
+  handleChangeUsername = (event) => {
+    this.setState({ username: event.target.value });
+  };
+
+  handleChangePassword = (event) => {
+    this.setState({ password: event.target.value });
+  };
+
+  authenticate = (event) => {
+    console.log(this.state.username);
+    console.log(this.state.password);
+  };
+
   deleteCustomer = (id) => {
     axios
       .delete('http://localhost:8080/customer/' + id)
@@ -162,109 +180,141 @@ class App extends Component {
     let whatever = null;
     return (
       <Aux>
-        <h1 className="left-top">Upload Directory</h1>
-        <Dropzone onDrop={this.onDrop}>
-          {({ getRootProps, getInputProps, isDragActive }) => (
-            <div {...getRootProps()} className="left-top">
-              <input
-                {...getInputProps()}
-                directory=""
-                webkitdirectory=""
-                type="file"
-                onChange={this.onChangeHandler}
-              />
-              <p className="looklikebutton">Choose Directory to Upload</p>
-            </div>
-          )}
-        </Dropzone>
-        {this.state.messages.length === 0
-          ? null
-          : this.state.messages.map((message) => (
-              <li key={message} className="left-top">
-                {message}
-              </li>
-            ))}
-        {/*         
+        {this.state.authorized ? (
+          <div>
+            <h1 className="left-top">Upload Directory</h1>
+            <Dropzone onDrop={this.onDrop}>
+              {({ getRootProps, getInputProps, isDragActive }) => (
+                <div {...getRootProps()} className="left-top">
+                  <input
+                    {...getInputProps()}
+                    directory=""
+                    webkitdirectory=""
+                    type="file"
+                    onChange={this.onChangeHandler}
+                  />
+                  <p className="looklikebutton">Choose Directory to Upload</p>
+                </div>
+              )}
+            </Dropzone>
+            {this.state.messages.length === 0
+              ? null
+              : this.state.messages.map((message) => (
+                  <li key={message} className="left-top">
+                    {message}
+                  </li>
+                ))}
+            {/*         
         <div className="left-top">
           {' '}
           <input type="file" name="file" onChange={this.onChangeHandler} />
         </div> */}
-        <div className="top-bottom"></div>
+            <div className="top-bottom"></div>
 
-        <div className="left-top">
-          <div style={{ display: 'inline-block' }}>
-            <h1>Rulesheets</h1>
+            <div className="left-top">
+              <div style={{ display: 'inline-block' }}>
+                <h1>Rulesheets</h1>
 
-            <table>
-              <tr>
-                <th>Id</th>
-                <th>Type</th>
-                <th>CustomerID</th>
-                <th>FileContent</th>
-              </tr>
-              {this.state.rulesheet_ids.length === 0
-                ? null
-                : this.state.rulesheet_ids.map((i, j) => (
-                    <tr>
-                      <td key={j} className="left-top">
-                        {i}
-                      </td>
-                      <td key={j} className="left-top">
-                        {this.state.rulesheet_types[j]}
-                      </td>
-                      <td key={j} className="left-top">
-                        {this.state.rulesheet_cid[j]}
-                      </td>{' '}
-                      <td key={j} className="left-top">
-                        {this.state.rulesheet_filecontents[j].substring(0, 10) +
-                          '...'}
-                      </td>{' '}
-                    </tr>
-                  ))}
-            </table>
+                <table>
+                  <tr>
+                    <th>Id</th>
+                    <th>Type</th>
+                    <th>CustomerID</th>
+                    <th>FileContent</th>
+                  </tr>
+                  {this.state.rulesheet_ids.length === 0
+                    ? null
+                    : this.state.rulesheet_ids.map((i, j) => (
+                        <tr>
+                          <td key={j} className="left-top">
+                            {i}
+                          </td>
+                          <td key={j} className="left-top">
+                            {this.state.rulesheet_types[j]}
+                          </td>
+                          <td key={j} className="left-top">
+                            {this.state.rulesheet_cid[j]}
+                          </td>{' '}
+                          <td key={j} className="left-top">
+                            {this.state.rulesheet_filecontents[j].substring(
+                              0,
+                              10
+                            ) + '...'}
+                          </td>{' '}
+                        </tr>
+                      ))}
+                </table>
+              </div>
+
+              <div style={{ float: 'right', 'margin-right': '40%' }}>
+                <h1>Customers</h1>
+
+                <table>
+                  <tr>
+                    <th>Customer ID</th>
+                    <th>Name</th>
+                    <th></th>
+                  </tr>
+                  {this.state.customer_ids.length === 0
+                    ? null
+                    : this.state.customer_ids.map((i, j) => (
+                        <tr>
+                          <td key={j} className="left-top">
+                            {i}
+                          </td>
+                          <td key={j} className="left-top">
+                            {this.state.customer_names[j]}
+                          </td>
+                          <td>
+                            <a href="#" onClick={() => this.deleteCustomer(i)}>
+                              Delete
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                </table>
+                <form
+                  onSubmit={this.addCustomer}
+                  style={{ 'margin-top': '10px' }}
+                >
+                  <label>
+                    Add Customer Name:
+                    <input
+                      type="text"
+                      value={this.state.newCustomer}
+                      onChange={this.handleChange}
+                    />
+                  </label>
+                  <input type="submit" value="Submit" />
+                </form>
+              </div>
+            </div>
+            <div className="top-bottom"></div>
           </div>
+        ) : (
+          // unauthenticated, show login page
+          <div style={{ 'text-align': 'center' }}>
+            <h2>Log in</h2>
+            <form onSubmit={this.authenticate}>
+              <label> User Name: </label>
+              <input
+                type="text"
+                value={this.state.username}
+                onChange={this.handleChangeUsername}
+              />
+              <br />
+              <label> Password: </label>
+              <input
+                type="password"
+                value={this.state.password}
+                onChange={this.handleChangePassword}
+              />
+              <br />
 
-          <div style={{ float: 'right', 'margin-right': '40%' }}>
-            <h1>Customers</h1>
-
-            <table>
-              <tr>
-                <th>Customer ID</th>
-                <th>Name</th>
-                <th></th>
-              </tr>
-              {this.state.customer_ids.length === 0
-                ? null
-                : this.state.customer_ids.map((i, j) => (
-                    <tr>
-                      <td key={j} className="left-top">
-                        {i}
-                      </td>
-                      <td key={j} className="left-top">
-                        {this.state.customer_names[j]}
-                      </td>
-                      <td>
-                        <a href="#" onClick={() => this.deleteCustomer(i)}>
-                          Delete
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-            </table>
-            <form onSubmit={this.addCustomer} style={{ 'margin-top': '10px' }}>
-              <label>
-                Add Customer Name:
-                <input
-                  type="text"
-                  value={this.state.newCustomer}
-                  onChange={this.handleChange}
-                />
-              </label>
-              <input type="submit" value="Submit" />
+              <input type="submit" value="Log In" />
             </form>
           </div>
-        </div>
-        <div className="top-bottom"></div>
+        )}
       </Aux>
     );
   }
