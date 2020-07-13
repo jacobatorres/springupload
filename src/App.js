@@ -179,8 +179,10 @@ class App extends Component {
         this.setState({ authenticated: true, token: res.data.jwt });
         console.log(res.data.jwt);
         localStorage.setItem('token_auth', res.data.jwt);
+        window.location.reload(false);
       })
       .catch((error) => {
+        this.setState({ auth_message: 'Incorrect Credentials' });
         console.log(error.response);
       });
     console.log(this.state.res);
@@ -229,13 +231,31 @@ class App extends Component {
       });
   };
 
+  logout = () => {
+    // not authenticated
+    // clear local storage
+
+    localStorage.clear();
+    this.setState({ authenticated: false });
+    window.location.reload(false);
+  };
+
   render() {
-    let whatever = null;
+    let show_auth_message = null;
+    if (this.state.auth_message != '') {
+      show_auth_message = <p style={{ color: 'red' }}>Incorrect Credentials</p>;
+    }
     return (
       <Aux>
         {localStorage.getItem('token_auth') ? (
           <div>
-            <h1 className="left-top"> {this.state.token}Upload Directory</h1>
+            <div className="left-top" style={{ textAlign: 'right' }}>
+              You are now logged in.{' '}
+              <a href="#" onClick={() => this.logout()}>
+                Log out
+              </a>
+            </div>
+            <h1 className="left-top"> Upload Directory</h1>
             <Dropzone onDrop={this.onDrop}>
               {({ getRootProps, getInputProps, isDragActive }) => (
                 <div {...getRootProps()} className="left-top">
@@ -366,6 +386,7 @@ class App extends Component {
 
               <input type="submit" value="Log In" />
             </form>
+            {show_auth_message}
           </div>
         )}
       </Aux>
