@@ -14,9 +14,11 @@ class App extends Component {
     rulesheet_cid: [],
     rulesheet_filecontents: [],
     newCustomer: '',
-    authorized: false,
+    authenticated: false,
     username: '',
     password: '',
+    auth_message: '',
+    res: {},
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
@@ -148,8 +150,22 @@ class App extends Component {
   };
 
   authenticate = (event) => {
+    event.preventDefault();
     console.log(this.state.username);
     console.log(this.state.password);
+    console.log(this.state.res);
+
+    let args = { username: this.state.username, password: this.state.password };
+
+    axios
+      .post('http://localhost:8080/authenticate', args)
+      .then((res) => {
+        this.setState({ authenticated: true, res: res });
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+    console.log(this.state.res);
   };
 
   deleteCustomer = (id) => {
@@ -180,7 +196,7 @@ class App extends Component {
     let whatever = null;
     return (
       <Aux>
-        {this.state.authorized ? (
+        {this.state.authenticated ? (
           <div>
             <h1 className="left-top">Upload Directory</h1>
             <Dropzone onDrop={this.onDrop}>
@@ -293,7 +309,7 @@ class App extends Component {
           </div>
         ) : (
           // unauthenticated, show login page
-          <div style={{ 'text-align': 'center' }}>
+          <div style={{ textAlign: 'center' }}>
             <h2>Log in</h2>
             <form onSubmit={this.authenticate}>
               <label> User Name: </label>
