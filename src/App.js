@@ -18,7 +18,7 @@ class App extends Component {
     username: '',
     password: '',
     auth_message: '',
-    res: {},
+    token: '',
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
@@ -28,53 +28,68 @@ class App extends Component {
   componentDidMount() {
     // get the customers
     // put them in a state: id, name
-    axios
-      .get('http://localhost:8080/customers')
-      .then((res) => {
-        console.log(res);
+    console.log(this.state.token);
+    console.log(this.state.authenticated);
+    console.log(localStorage.getItem('token_auth'));
+    let config = null;
+    if (localStorage.getItem('token_auth')) {
+      axios
+        .get('http://localhost:8080/customers', {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
+          },
+        })
+        .then((res) => {
+          console.log('finally here...');
+          console.log(res);
 
-        // for loop into getting the ids and name
+          // for loop into getting the ids and name
 
-        for (var i = 0; i < res.data.length; i++) {
-          this.setState((prevState) => ({
-            customer_ids: [...prevState.customer_ids, res.data[i].id],
+          for (var i = 0; i < res.data.length; i++) {
+            this.setState((prevState) => ({
+              customer_ids: [...prevState.customer_ids, res.data[i].id],
 
-            customer_names: [...prevState.customer_names, res.data[i].name],
-          }));
-        }
+              customer_names: [...prevState.customer_names, res.data[i].name],
+            }));
+          }
 
-        axios
-          .get('http://localhost:8080/rulesheets')
-          .then((res2) => {
-            // for loop into getting the ids and name
-            console.log(res2);
-            for (var i = 0; i < res2.data.length; i++) {
-              this.setState((prevState) => ({
-                rulesheet_ids: [...prevState.rulesheet_ids, res2.data[i].id],
+          axios
+            .get('http://localhost:8080/rulesheets', {
+              headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
+              },
+            })
+            .then((res2) => {
+              // for loop into getting the ids and name
+              console.log(res2);
+              for (var i = 0; i < res2.data.length; i++) {
+                this.setState((prevState) => ({
+                  rulesheet_ids: [...prevState.rulesheet_ids, res2.data[i].id],
 
-                rulesheet_types: [
-                  ...prevState.rulesheet_types,
-                  res2.data[i].type,
-                ],
+                  rulesheet_types: [
+                    ...prevState.rulesheet_types,
+                    res2.data[i].type,
+                  ],
 
-                rulesheet_cid: [...prevState.rulesheet_cid, res2.data[i].cid],
+                  rulesheet_cid: [...prevState.rulesheet_cid, res2.data[i].cid],
 
-                rulesheet_filecontents: [
-                  ...prevState.rulesheet_filecontents,
-                  res2.data[i].filecontent,
-                ],
-              }));
-            }
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
-      })
-      .catch((error) => {
-        console.log('sad :( ');
+                  rulesheet_filecontents: [
+                    ...prevState.rulesheet_filecontents,
+                    res2.data[i].filecontent,
+                  ],
+                }));
+              }
+            })
+            .catch((error) => {
+              console.log(error.response);
+            });
+        })
+        .catch((error) => {
+          console.log('sad :( ');
 
-        console.log(error.response);
-      });
+          console.log(error.response);
+        });
+    }
   }
 
   onChangeHandler = (event) => {
@@ -94,6 +109,7 @@ class App extends Component {
         .post('http://localhost:8080/rulesheet', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
           },
         })
         .then((res) => {
@@ -160,7 +176,9 @@ class App extends Component {
     axios
       .post('http://localhost:8080/authenticate', args)
       .then((res) => {
-        this.setState({ authenticated: true, res: res });
+        this.setState({ authenticated: true, token: res.data.jwt });
+        console.log(res.data.jwt);
+        localStorage.setItem('token_auth', res.data.jwt);
       })
       .catch((error) => {
         console.log(error.response);
@@ -170,19 +188,38 @@ class App extends Component {
 
   deleteCustomer = (id) => {
     axios
-      .delete('http://localhost:8080/customer/' + id)
+      .post(
+        'http://localhost:8080/customer/' + id,
+        {},
+        {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
+          },
+        }
+      )
       .then((res) => {
+        console.log('pls');
         console.log(res);
         window.location.reload(false);
       })
       .catch((error) => {
+        console.log('wag');
+
         console.log(error.response);
       });
   };
 
   addCustomer = () => {
     axios
-      .post('http://localhost:8080/customer?name=' + this.state.newCustomer)
+      .post(
+        'http://localhost:8080/customer?name=' + this.state.newCustomer,
+        {},
+        {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
+          },
+        }
+      )
       .then((res) => {
         console.log(res);
         window.location.reload(false);
@@ -196,9 +233,9 @@ class App extends Component {
     let whatever = null;
     return (
       <Aux>
-        {this.state.authenticated ? (
+        {localStorage.getItem('token_auth') ? (
           <div>
-            <h1 className="left-top">Upload Directory</h1>
+            <h1 className="left-top"> {this.state.token}Upload Directory</h1>
             <Dropzone onDrop={this.onDrop}>
               {({ getRootProps, getInputProps, isDragActive }) => (
                 <div {...getRootProps()} className="left-top">
