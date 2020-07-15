@@ -19,6 +19,7 @@ class App extends Component {
     password: '',
     auth_message: '',
     token: '',
+    url: 'spring-exercise-cr-maven2-dev4.us-west-2.elasticbeanstalk.com', // , //'localhost:8080'
   };
   onDrop = (uploadedFiles) => {
     console.log(uploadedFiles.files[0]);
@@ -34,7 +35,7 @@ class App extends Component {
     let config = null;
     if (localStorage.getItem('token_auth')) {
       axios
-        .get('http://localhost:8080/customers', {
+        .get('http://' + this.state.url + '/customers', {
           headers: {
             Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
           },
@@ -54,7 +55,7 @@ class App extends Component {
           }
 
           axios
-            .get('http://localhost:8080/rulesheets', {
+            .get('http://' + this.state.url + '/rulesheets', {
               headers: {
                 Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
               },
@@ -106,7 +107,7 @@ class App extends Component {
       var formData = new FormData();
       formData.append('file', list_of_files[i]);
       axios
-        .post('http://localhost:8080/rulesheet', formData, {
+        .post('http://' + this.state.url + '/rulesheet', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: 'Bearer ' + localStorage.getItem('token_auth'),
@@ -123,34 +124,6 @@ class App extends Component {
         });
     }
     console.log('end');
-
-    // // axios.get('http://localhost:8080/rulesheets').then((res) => {
-    // //   // then print response status
-    // //   console.log(res);
-    // // }); // this works
-
-    // // axios.post('', {
-    // //   firstName: 'Fred',
-    // //   lastName: 'Flintstone'
-    // // })
-    // // .then(function (response) {
-    // //   console.log(response);
-    // // })
-    // var formData = new FormData();
-    // formData.append('file', event.target.files[0]);
-    // axios
-    //   .post('http://localhost:8080/rulesheet', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //   })
-    //   .catch((error) => {
-    //     console.log('nagkamali');
-    //     console.log(error.response);
-    //   });
   };
 
   handleChange = (event) => {
@@ -174,7 +147,7 @@ class App extends Component {
     let args = { username: this.state.username, password: this.state.password };
 
     axios
-      .post('http://localhost:8080/authenticate', args)
+      .post('http://' + this.state.url + '/authenticate', args)
       .then((res) => {
         this.setState({ authenticated: true, token: res.data.jwt });
         console.log(res.data.jwt);
@@ -191,7 +164,7 @@ class App extends Component {
   deleteCustomer = (id) => {
     axios
       .post(
-        'http://localhost:8080/customer/' + id,
+        'http://' + this.state.url + '/deleteCustomer?id=' + id,
         {},
         {
           headers: {
@@ -202,7 +175,7 @@ class App extends Component {
       .then((res) => {
         console.log('pls');
         console.log(res);
-        window.location.reload(false);
+        // window.location.reload(false);
       })
       .catch((error) => {
         console.log('wag');
@@ -214,7 +187,7 @@ class App extends Component {
   addCustomer = () => {
     axios
       .post(
-        'http://localhost:8080/customer?name=' + this.state.newCustomer,
+        'http://' + this.state.url + '/customer?name=' + this.state.newCustomer,
         {},
         {
           headers: {
